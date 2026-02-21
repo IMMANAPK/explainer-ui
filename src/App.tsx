@@ -8,6 +8,7 @@ const LANGUAGES = [
   { label: "Malayalam", language: "ml", voice: "ml-IN-MidhunNeural", font: "Noto Sans Malayalam" },
   { label: "Arabic", language: "ar", voice: "ar-SA-HamedNeural", font: "Noto Sans Arabic" },
 ];
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 function App() {
   const [tab, setTab] = useState<"generate" | "history">("generate");
@@ -21,7 +22,7 @@ function App() {
   const [history, setHistory] = useState<any[]>([]);
 
   const fetchHistory = async () => {
-    const res = await fetch("http://localhost:3001/video/history");
+    const res = await fetch(`${API_URL}/video/history`);
     const data = await res.json();
     setHistory(data);
   };
@@ -35,7 +36,7 @@ function App() {
     setGenerating(true);
     setMessage("");
     try {
-      const res = await fetch("http://localhost:3001/video/generate", {
+      const res = await fetch(`${API_URL}/video/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -62,14 +63,14 @@ function App() {
     setRendering(true);
     setMessage("");
     try {
-      const res = await fetch("http://localhost:3001/video/render", {
+      const res = await fetch(`${API_URL}/video/render`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });
       const data = await res.json();
       if (data.success) {
         setMessage("✅ MP4 rendered!");
-        setVideoUrl(`http://localhost:3001/output/explainer.mp4?t=${Date.now()}`);
+        setVideoUrl(`${API_URL}/output/explainer.mp4?t=${Date.now()}`);
       } else {
         setMessage("❌ Error: " + data.error);
       }
