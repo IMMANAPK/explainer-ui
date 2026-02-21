@@ -1,14 +1,13 @@
 import { AbsoluteFill, Audio, useCurrentFrame, useVideoConfig } from "remotion";
 
-interface Props {
+export interface Props {
     title: string;
-    text: string;
     font: string;
     audioUrl: string;
     words: { word: string; start: number; end: number }[];
 }
 
-export const ExplainerVideo = ({ title, text, font, audioUrl, words }: Props) => {
+export const ExplainerVideo = ({ title, font, audioUrl, words }: Props) => {
     const frame = useCurrentFrame();
     const { fps } = useVideoConfig();
     const currentTime = frame / fps;
