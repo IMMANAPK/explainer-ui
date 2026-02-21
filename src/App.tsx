@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { Player } from "@remotion/player";
+import { ExplainerVideo } from "./ExplainerVideo/ExplainerVideo";
 
 const LANGUAGES = [
   { label: "Tamil", language: "ta", voice: "ta-IN-ValluvarNeural", font: "Noto Sans Tamil" },
@@ -18,8 +20,9 @@ function App() {
   const [generating, setGenerating] = useState(false);
   const [rendering, setRendering] = useState(false);
   const [message, setMessage] = useState("");
-  const [videoUrl, setVideoUrl] = useState("");
+  const [, setVideoUrl] = useState("");
   const [history, setHistory] = useState<any[]>([]);
+  const [videoData, setVideoData] = useState<any>(null);
 
   const fetchHistory = async () => {
     const res = await fetch(`${API_URL}/video/history`);
@@ -50,6 +53,7 @@ function App() {
       const data = await res.json();
       if (data.success) {
         setMessage("✅ Video generated! Now click Render MP4.");
+        setVideoData(data);
       } else {
         setMessage("❌ Error: " + data.error);
       }
@@ -169,10 +173,28 @@ function App() {
               </p>
             )}
 
-            {videoUrl && (
-              <video key={videoUrl} controls autoPlay style={{ width: "100%", marginTop: 20, borderRadius: 12, border: "2px solid #2a9d8f" }}>
-                <source src={videoUrl} type="video/mp4" />
-              </video>
+            {videoData && (
+              <Player
+                component={ExplainerVideo}
+                inputProps={{
+                  title: title,
+                  text: text,
+                  font: selectedLang.font,
+                  audioUrl: videoData.audioUrl,
+                  words: videoData.words,
+                }}
+                durationInFrames={Math.ceil(videoData.duration * 30) + 30}
+                compositionWidth={1920}
+                compositionHeight={1080}
+                fps={30}
+                style={{
+                  width: "100%",
+                  marginTop: 20,
+                  borderRadius: 12,
+                  border: "2px solid #2a9d8f",
+                }}
+                controls
+              />
             )}
           </>
         )}
